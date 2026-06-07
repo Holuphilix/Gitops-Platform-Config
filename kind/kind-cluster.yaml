@@ -1,0 +1,28 @@
+# Kind cluster configuration for local Kubernetes testing and development.
+# This file defines the cluster topology and basic node layout.
+
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+networking:
+  # Use the default pod subnet and service subnet for a standard Kind cluster.
+  podSubnet: "10.244.0.0/16"
+  serviceSubnet: "10.96.0.0/12"
+
+nodes:
+  - role: control-plane
+    # The single control-plane node manages the Kubernetes API server, scheduler, and controller manager.
+    extraPortMappings:
+      # No ingress ports are configured yet; this is a clean cluster setup.
+      # Additional port mappings can be added later if external access is required.
+      - containerPort: 6443
+        hostPort: 6443
+        listenAddress: "127.0.0.1"
+        protocol: TCP
+
+  - role: worker
+    # Worker node 1 handles application workloads and can be used for development testing.
+    image: kindest/node:v1.28.0
+
+  - role: worker
+    # Worker node 2 provides additional capacity and resilience for multi-node testing.
+    image: kindest/node:v1.28.0
